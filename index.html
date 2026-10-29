@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DealPulse AI | Stop the Sales Noise. Close Deals Faster.</title>
+    <style>
+        /* --- CSS Reset & Variables --- */
+        :root {
+            --brand-dark: #0f172a;   /* Slate 900 */
+            --brand-darker: #020617; /* Slate 950 */
+            --brand-light: #f8fafc;  /* Slate 50 */
+            --brand-accent: #4f46e5; /* Indigo 600 */
+            --brand-accent-hover: #4338ca;
+            --text-main: #334155;    /* Slate 700 */
+            --text-muted: #64748b;   /* Slate 500 */
+            --white: #ffffff;
+            --urgent-red: #ef4444;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--brand-light);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        h1, h2, h3 { color: var(--brand-dark); font-weight: 800; line-height: 1.2; }
+        p { margin-bottom: 1rem; }
+
+        /* --- Buttons --- */
+        .btn {
+            display: inline-block;
+            background-color: var(--brand-accent);
+            color: var(--white);
+            padding: 14px 28px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 8px;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn:hover { background-color: var(--brand-accent-hover); transform: translateY(-1px); }
+        .btn-outline {
+            background-color: transparent;
+            color: var(--brand-accent);
+            border: 2px solid var(--brand-accent);
+        }
+        .btn-outline:hover {
+            background-color: var(--brand-accent);
+            color: var(--white);
+        }
+        .btn-large { width: 100%; padding: 16px; font-size: 1.15rem; }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--white);
+            padding: 18px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { font-size: 1.4rem; font-weight: 900; color: var(--brand-dark); text-decoration: none; letter-spacing: -0.5px; }
+        .logo span { color: var(--brand-accent); }
+
+        /* --- Hero Section --- */
+        .hero {
+            background: linear-gradient(180deg, var(--brand-darker) 0%, var(--brand-dark) 100%);
+            color: var(--white);
+            padding: 60px 0 80px;
+            text-align: center;
+            overflow: hidden;
+        }
+        .hero h1 { color: var(--white); font-size: 2.4rem; margin-bottom: 20px; letter-spacing: -0.5px; }
+        .hero p { font-size: 1.15rem; color: #cbd5e1; margin-bottom: 30px; max-width: 650px; margin-left: auto; margin-right: auto; }
+        
+        /* Animated Distress Feed */
+        .distress-feed {
+            max-width: 600px;
+            margin: 35px auto 0;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 15px;
+            height: 190px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
+        }
+        .feed-header {
+            font-size: 0.72rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .live-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--urgent-red);
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .feed-item {
+            position: absolute;
+            width: calc(100% - 30px);
+            background: var(--white);
+            color: var(--brand-dark);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            opacity: 0;
+            animation: slideNoise 8s infinite ease-in-out;
+        }
+        .feed-item.urgent { border-left: 4px solid var(--urgent-red); }
+        .feed-item.sfdc { border-left: 4px solid #0284c7; }
+        .feed-item.slack { border-left: 4px solid #4a154b; }
+
+        .noise-1 { animation-delay: 0s; }
+        .noise-2 { animation-delay: 2.6s; }
+        .noise-3 { animation-delay: 5.2s; }
+
+        @keyframes slideNoise {
+            0% { transform: translateY(40px); opacity: 0; }
+            10% { transform: translateY(0); opacity: 1; }
+            30% { transform: translateY(0); opacity: 1; }
+            40% { transform: translateY(-40px); opacity: 0; }
+            100% { transform: translateY(-40px); opacity: 0; }
+        }
+
+        /* --- Quote Section --- */
+        .problem-quote {
+            padding: 50px 0;
+            background-color: var(--white);
+        }
+        .quote-box {
+            background-color: var(--brand-light);
+            border-left: 6px solid var(--brand-accent);
+            padding: 30px;
+            border-radius: 0 12px 12px 0;
+            font-size: 1.25rem;
+            font-style: italic;
+            color: var(--brand-dark);
+            margin: 0 auto;
+            max-width: 800px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+        }
+        .quote-author {
+            display: block;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            font-style: normal;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        /* --- How It Works --- */
+        .how-it-works { padding: 60px 0; text-align: center; }
+        .how-it-works h2 { font-size: 2rem; margin-bottom: 40px; }
+        .steps-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .step-card {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            flex: 1;
+            text-align: left;
+        }
+        .step-icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .step-card h3 { font-size: 1.25rem; margin-bottom: 8px; color: var(--brand-dark); }
+        .step-card p { font-size: 0.95rem; color: var(--text-main); margin-bottom: 0; }
+
+        /* --- Pricing --- */
+        .pricing { padding: 60px 0; background-color: var(--white); text-align: center; }
+        .pricing h2 { font-size: 2rem; margin-bottom: 10px; }
+        .pricing-card {
+            background-color: var(--brand-light);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 40px 24px;
+            max-width: 440px;
+            margin: 30px auto 0;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08);
+            text-align: left;
+        }
+        .price-huge { font-size: 3.5rem; font-weight: 800; color: var(--brand-dark); line-height: 1; margin: 15px 0 5px; }
+        .price-huge span { font-size: 1.2rem; font-weight: 600; color: var(--text-muted); }
+        .pricing-details { list-style: none; padding: 0; margin: 25px 0; }
+        .pricing-details li { margin-bottom: 12px; font-size: 1rem; padding-left: 28px; position: relative; }
+        .pricing-details li::before {
+            content: "✓"; position: absolute; left: 0; color: var(--brand-accent); font-weight: bold;
+        }
+
+        /* --- Waitlist CTA --- */
+        .cta-section { background-color: var(--brand-accent); color: var(--white); padding: 70px 0; text-align: center; }
+        .cta-section h2 { color: var(--white); font-size: 2rem; margin-bottom: 15px; }
+        .waitlist-form { max-width: 400px; margin: 0 auto; background: var(--white); padding: 30px; border-radius: 12px; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; color: var(--brand-dark); font-weight: 700; margin-bottom: 5px; font-size: 0.9rem; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; }
+        
+        #thank-you-msg {
+            display: none;
+            background: #dcfce7;
+            color: #166534;
+            padding: 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 20px;
+        }
+
+        /* --- Footer --- */
+        footer { 
+            background-color: var(--brand-darker); 
+            color: var(--text-muted); 
+            padding: 40px 0; 
+            text-align: center; 
+            font-size: 0.9rem; 
+        }
+
+        @media (min-width: 768px) {
+            .hero h1 { font-size: 3.2rem; }
+            .steps-grid { flex-direction: row; }
+            .btn-large { width: auto; min-width: 260px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <a href="#" class="logo">Deal<span>Pulse</span> AI</a>
+            <!-- Opens demo in a new tab -->
+            <a href="demo.html" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Try Interactive Demo</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Stop letting urgent sales noise bury deal revenue.</h1>
+            <p>A simple, real-time triage inbox built exclusively for Deal Desk and RevOps teams. Separate 5-minute quick wins from complex contract reviews without drowning in Slack.</p>
+            
+            <!-- Opens demo in a new tab -->
+            <a href="demo.html" target="_blank" rel="noopener noreferrer" class="btn btn-large">Try the Live Demo</a>
+
+            <!-- Animated Distress Feed -->
+            <div class="distress-feed">
+                <div class="feed-header">
+                    <span class="live-dot"></span> LIVE INCOMING CHAOS (SALES PANIC)
+                </div>
+
+                <div class="feed-item urgent noise-1">
+                    <span>🚨 <strong>Slack:</strong> "URGENT!! Need 20% discount approved to send quote right now!"</span>
+                    <span style="font-size:0.75rem; color:#94a3b8;">Just now</span>
+                </div>
+
+                <div class="feed-item sfdc noise-2">
+                    <span>☁️ <strong>SFDC:</strong> Non-standard Net 60 payment terms exception approval</span>
+                    <span style="font-size:0.75rem; color:#94a3b8;">2m ago</span>
+                </div>
+
+                <div class="feed-item slack noise-3">
+                    <span>💬 <strong>Slack:</strong> "Quick question, can we waive the onboarding fee before call?"</span>
+                    <span style="font-size:0.75rem; color:#94a3b8;">5m ago</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Reality Section (Quote) -->
+    <section class="problem-quote">
+        <div class="container">
+            <div class="quote-box">
+                "I don't know what fire to put out first. In the sales world, literally everything is marked 'URGENT'—even routine renewals—so we waste hours digging through Slack and Salesforce just to figure out what's an easy 5-minute fix versus what will take half a day."
+                <span class="quote-author">— The reality for high-growth Deal Operations teams (Simulated quote)</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2>How it works</h2>
+            <div class="steps-grid">
+                <!-- Step 1 -->
+                <div class="step-card">
+                    <div class="step-icon">📥</div>
+                    <h3>1. Centralize the Noise</h3>
+                    <p>Every inbound request across Salesforce cases, direct emails, and Slack DMs flows into one consolidated Deal Desk queue on your phone or desktop.</p>
+                </div>
+                <!-- Step 2 -->
+                <div class="step-card">
+                    <div class="step-icon">⚡</div>
+                    <h3>2. AI Triages True Urgency</h3>
+                    <p>DealPulse AI estimates effort based on request text and cross-references actual Opportunity close dates—separating 5-minute quick wins from complex deals automatically.</p>
+                </div>
+                <!-- Step 3 -->
+                <div class="step-card">
+                    <div class="step-icon">🤝</div>
+                    <h3>3. Action & Handover</h3>
+                    <p>Clear routine approvals with one tap, reply directly to reps without opening Slack, or hand over heavy files to available teammates with instant context.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing">
+        <div class="container">
+            <h2>Simple, transparent pricing</h2>
+            <p style="color: var(--text-muted);">Pays for itself by reclaiming just 45 minutes of manual triage a day.</p>
+            
+            <div class="pricing-card">
+                <h3 style="font-size: 1.3rem;">Deal Desk Team License</h3>
+                <div class="price-huge">€99<span>/user/mo</span></div>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">+ €1,200 one-time setup & CRM mapping</p>
+                
+                <ul class="pricing-details">
+                    <li><strong>Unified intake</strong> (Salesforce, Slack & Email)</li>
+                    <li><strong>AI effort classification</strong> (Quick Wins vs Deep Work)</li>
+                    <li><strong>True urgency scoring</strong> (Live close-date countdowns)</li>
+                    <li><strong>1-Tap ticket handover</strong> with audit trail</li>
+                    <li><strong>Confidential channel guardrails</strong> (Private chat protection)</li>
+                    <li><strong>Manager workload dashboard</strong> with instant reassignments</li>
+                </ul>
+
+                <a href="#waitlist" class="btn" style="width: 100%;">Get Early Access</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Waitlist CTA -->
+    <section class="cta-section" id="waitlist">
+        <div class="container">
+            <h2>Ready to quiet the queue?</h2>
+            <p style="margin-bottom: 30px;">We are currently launching our alpha version. Join the waitlist to secure priority onboarding.</p>
+            
+            <form id="waitlist-form" class="waitlist-form">
+                <div class="form-group">
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" required placeholder="e.g. Alex Morgan">
+                </div>
+                <div class="form-group">
+                    <label for="email">Work Email</label>
+                    <input type="email" id="email" required placeholder="alex@company.com">
+                </div>
+                <button type="submit" class="btn btn-large" style="width: 100%; margin-top: 10px;">Join Waitlist</button>
+            </form>
+
+            <div id="thank-you-msg">
+                🎉 Thank you for joining the waitlist! We will be in touch soon.
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>DealPulse AI is an alpha product designed for B2B SaaS Deal Desk and RevOps teams.</p>
+            <p>&copy; 2026 DealPulse AI. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Form Handling Script -->
+    <script>
+        document.getElementById('waitlist-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            this.style.display = 'none';
+            document.getElementById('thank-you-msg').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
