@@ -77,6 +77,12 @@
             font-weight: 800;
         }
 
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
         /* Role Switcher */
         .role-switcher-container {
             display: flex;
@@ -102,6 +108,21 @@
             background: var(--card);
             color: var(--primary);
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .btn-reset-demo {
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-reset-demo:hover {
+            color: var(--text);
+            background: #e2e8f0;
         }
 
         /* Persona Banner */
@@ -221,7 +242,7 @@
             margin-top: 4px;
         }
 
-        /* Manager Team Breakdown Widget (Clickable Rows) */
+        /* Manager Team Breakdown Widget */
         .team-breakdown-card {
             background: var(--card);
             border: 1px solid var(--border);
@@ -659,10 +680,15 @@
             <h1>⚡ DealPulse AI</h1>
         </div>
         
-        <!-- Role Switcher -->
-        <div class="role-switcher-container">
-            <button id="role-analyst" class="role-btn active" onclick="switchRole('analyst')">👤 Deal Ops</button>
-            <button id="role-manager" class="role-btn" onclick="switchRole('manager')">👔 Manager</button>
+        <div class="header-controls">
+            <!-- Reset Button for easy testing -->
+            <button class="btn-reset-demo" onclick="resetData()" title="Reset data to pristine demo state">↺ Reset</button>
+
+            <!-- Role Switcher -->
+            <div class="role-switcher-container">
+                <button id="role-analyst" class="role-btn active" onclick="switchRole('analyst')">👤 Deal Ops</button>
+                <button id="role-manager" class="role-btn" onclick="switchRole('manager')">👔 Manager</button>
+            </div>
         </div>
     </header>
 
@@ -676,7 +702,6 @@
     <nav>
         <button id="btn-queue" class="tab-btn active" onclick="goTab('queue')">My Queue</button>
         <button id="btn-private" class="tab-btn" onclick="goTab('private')">Private DMs</button>
-        <!-- Manager Tab dynamically displayed based on role -->
         <button id="btn-manager" class="tab-btn" style="display: none;" onclick="goTab('manager')">Manager View</button>
     </nav>
 
@@ -686,7 +711,7 @@
         <div class="stats-grid three-col">
             <div class="stat-card">
                 <div class="num" id="my-stat-total">0</div>
-                <div class="lbl">My Tasks</div>
+                <div class="lbl">My Tasks (All Channels)</div>
             </div>
             <div class="stat-card alert">
                 <div class="num" id="my-stat-urgent">0</div>
@@ -736,7 +761,7 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="num" id="stat-total">0</div>
-                <div class="lbl">Audited Cases (SFDC/Email)</div>
+                <div class="lbl">Team Audited (SFDC / Email)</div>
             </div>
             <div class="stat-card alert">
                 <div class="num" id="stat-urgent">0</div>
@@ -747,13 +772,13 @@
         <!-- Clickable Cases per Deal Op Specialist Widget -->
         <div class="team-breakdown-card">
             <div class="team-breakdown-header">
-                <span>Cases per Deal Op Specialist</span>
-                <span>Active / Urgent</span>
+                <span>Cases per Specialist (SFDC & Email only)</span>
+                <span>Audited / Urgent</span>
             </div>
             <div id="team-breakdown-list"></div>
         </div>
 
-        <!-- Person Filter Indicator Banner (appears when filtering by a person) -->
+        <!-- Person Filter Indicator Banner -->
         <div id="person-filter-banner" class="filter-status-banner" style="display: none;">
             <span>Filtered by: <strong id="person-filter-name">None</strong></span>
             <button onclick="clearPersonFilter()">Clear Filter ✕</button>
@@ -836,14 +861,9 @@
             { id: 'T-102', source: 'Slack', type: 'work', company: 'Beta LLC', desc: 'Need standard 10% volume discount approved on renewal.', closeDate: addDays(2), effort: '5m', isQuick: true, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
             { id: 'T-103', source: 'Email', type: 'work', company: 'Gamma Inc', desc: 'Legal redlines received on master services agreement indemnification.', closeDate: addDays(14), effort: '2h', isQuick: false, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
             { id: 'T-104', source: 'Slack', type: 'work', company: 'Delta Co', desc: 'Change bill-to legal entity on approved quote before sending.', closeDate: addDays(0), effort: '10m', isQuick: true, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
-            
-            // Manager Personal Request 1
             { id: 'T-105', source: 'SFDC', type: 'work', company: 'Zeta Corp', desc: 'Executive Escalation: Multi-year ramp deal structure review with custom tiered pricing (> $500k ARR).', closeDate: addDays(5), effort: '1.5h', isQuick: false, owner: 'Manager', completed: false, replies: [] },
-            
-            // Private DMs for Alex (Deal Ops)
             { id: 'T-106', source: 'Slack', type: 'private', company: 'John (Sales AE)', desc: 'Can we grab 5 min coffee later to talk about my Q3 commission tier?', closeDate: null, effort: '15m', isQuick: true, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
             { id: 'T-107', source: 'Slack', type: 'private', company: 'People Ops', desc: 'Reminder: Submit benefits open enrollment by Friday 5 PM.', closeDate: null, effort: '5m', isQuick: true, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
-            
             { id: 'T-108', source: 'Email', type: 'work', company: 'Epsilon Ltd', desc: 'Product downgrade request for 20 seats on auto-renew.', closeDate: addDays(6), effort: '25m', isQuick: false, owner: 'David (Deal Desk)', completed: false, replies: [] },
             { id: 'T-109', source: 'SFDC', type: 'work', company: 'Horizon AI', desc: 'Early renewal request co-terming 3 separate active contracts.', closeDate: addDays(1), effort: '45m', isQuick: false, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
             { id: 'T-110', source: 'Slack', type: 'work', company: 'Apex Global', desc: 'Can we waive the $1,500 onboarding fee for fast quarterly close?', closeDate: addDays(0), effort: '5m', isQuick: true, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
@@ -853,13 +873,8 @@
             { id: 'T-114', source: 'Slack', type: 'work', company: 'SolarEdge Bio', desc: 'Needs approval for 10 developer sandbox add-ons at 40% off.', closeDate: addDays(3), effort: '10m', isQuick: true, owner: 'David (Deal Desk)', completed: false, replies: [] },
             { id: 'T-115', source: 'Email', type: 'work', company: 'CloudPeak Systems', desc: 'AE selected EUR instead of USD on order form. Price book unlock needed.', closeDate: addDays(1), effort: '5m', isQuick: true, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
             { id: 'T-116', source: 'SFDC', type: 'work', company: 'CyberVigil', desc: 'Security questionnaire and mutual DPA terms review for enterprise pilot.', closeDate: addDays(11), effort: '1.5h', isQuick: false, owner: 'Emma (RevOps)', completed: false, replies: [] },
-            
-            // Private DM for Manager
             { id: 'T-117', source: 'Slack', type: 'private', company: 'VP of Sales', desc: 'Hey, please review the revised discount matrix before tomorrow\'s executive committee call.', closeDate: null, effort: '10m', isQuick: true, owner: 'Manager', completed: false, replies: [] },
-            
-            // Manager Personal Request 2
             { id: 'T-118', source: 'SFDC', type: 'work', company: 'Vertex Financial', desc: 'VP Exception Approval: Multi-subsidiary billing split across 3 EMEA and US entities with liability carve-out.', closeDate: addDays(2), effort: '2h', isQuick: false, owner: 'Manager', completed: false, replies: [] },
-            
             { id: 'T-119', source: 'Slack', type: 'work', company: 'PulsePoint Media', desc: 'Customer CFO signed but used old 2025 price book. Validate delta.', closeDate: addDays(0), effort: '15m', isQuick: true, owner: 'Sarah (Senior Analyst)', completed: false, replies: [] },
             { id: 'T-120', source: 'Email', type: 'work', company: 'Summit Logistics', desc: 'Net 45 terms requested on a multi-year software expansion deal.', closeDate: addDays(3), effort: '10m', isQuick: true, owner: 'Sarah (Senior Analyst)', completed: false, replies: [] }
         ];
@@ -881,17 +896,24 @@
         let sourceFilter = 'all';
         let managerFilter = 'all';
         let managerSourceFilter = 'all';
-        let managerPersonFilter = null; // null means 'all team members'
+        let managerPersonFilter = null;
         
         let targetId = null;
-        let poolIndex = 0;
         let toastTimeout = null;
 
         function loadState() {
             try {
-                const saved = localStorage.getItem('dealpulse_v10');
+                // Using clean v12 storage key to clear previous duplicates
+                const saved = localStorage.getItem('dealpulse_v12');
                 if (saved) {
                     state = JSON.parse(saved);
+                    // Deduplicate defensively
+                    const seen = new Set();
+                    state = state.filter(item => {
+                        if (seen.has(item.id)) return false;
+                        seen.add(item.id);
+                        return true;
+                    });
                     if (!Array.isArray(state) || state.length < 15) throw new Error("Reload");
                 } else {
                     state = JSON.parse(JSON.stringify(INITIAL_DATA));
@@ -904,14 +926,13 @@
         }
 
         function saveState() {
-            try { localStorage.setItem('dealpulse_v10', JSON.stringify(state)); } catch(e) {}
+            try { localStorage.setItem('dealpulse_v12', JSON.stringify(state)); } catch(e) {}
         }
 
         function resetData() {
-            if (confirm("Reset all records back to initial demo state?")) {
-                try { localStorage.removeItem('dealpulse_v10'); } catch(e) {}
+            if (confirm("Reset demo data to initial pristine state?")) {
+                try { localStorage.removeItem('dealpulse_v12'); } catch(e) {}
                 state = JSON.parse(JSON.stringify(INITIAL_DATA));
-                poolIndex = 0;
                 managerPersonFilter = null;
                 render();
             }
@@ -993,9 +1014,9 @@
         // --- CLICK ON PERSON IN MANAGER VIEW ---
         function togglePersonFilter(personName) {
             if (managerPersonFilter === personName) {
-                managerPersonFilter = null; // Toggle off if clicked again
+                managerPersonFilter = null;
             } else {
-                managerPersonFilter = personName; // Filter by this person
+                managerPersonFilter = personName;
             }
             renderManager();
         }
@@ -1088,6 +1109,7 @@
             const el = document.getElementById('queue-container');
             const activeOwner = (currentRole === 'manager') ? 'Manager' : 'Alex (Deal Ops)';
 
+            // My Queue shows all work channels (SFDC, Slack, Email) for this user
             let myAllTasks = state.filter(x => x.type === 'work' && x.owner === activeOwner && !x.completed);
 
             const totalMyTasks = myAllTasks.length;
@@ -1124,6 +1146,7 @@
 
         function renderManagerCards() {
             const el = document.getElementById('manager-container');
+            // Manager ONLY sees SFDC and Email across team (Slack hidden for staff privacy)
             let workList = state.filter(x => x.type === 'work' && !x.completed && x.source !== 'Slack');
 
             // Apply Person Filter
@@ -1141,7 +1164,7 @@
 
             if (!workList.length) {
                 el.innerHTML = `<p style="text-align:center; padding:35px; color: var(--muted); font-size: 0.95rem;">
-                    🎉 No tasks matching this filter combination${managerPersonFilter ? ` for <strong>${managerPersonFilter}</strong>` : ''}.
+                    🎉 No audited tasks matching this filter combination${managerPersonFilter ? ` for <strong>${managerPersonFilter}</strong>` : ''}.
                 </p>`;
             } else {
                 el.innerHTML = workList.map(item => buildCard(item, true)).join('');
@@ -1154,6 +1177,7 @@
             const filterNameEl = document.getElementById('person-filter-name');
             const reqHeading = document.getElementById('mgr-requests-heading');
 
+            // Strictly formal systems of record
             const auditedWorkList = state.filter(x => x.type === 'work' && !x.completed && x.source !== 'Slack');
             
             const total = auditedWorkList.length;
@@ -1166,7 +1190,7 @@
             if (managerPersonFilter) {
                 filterBanner.style.display = 'flex';
                 filterNameEl.innerText = managerPersonFilter;
-                reqHeading.innerText = `Cases Assigned to ${managerPersonFilter} (Reassign Any Task)`;
+                reqHeading.innerText = `Audited Cases for ${managerPersonFilter} (Reassign Any Task)`;
             } else {
                 filterBanner.style.display = 'none';
                 reqHeading.innerText = 'Team Audited Requests (Reassign Any Task)';
@@ -1182,13 +1206,13 @@
                 const isSelected = (managerPersonFilter === person);
 
                 breakdownHTML += `
-                    <div class="team-member-row ${isSelected ? 'selected' : ''}" onclick="togglePersonFilter('${person}')" title="Click to view only ${person}'s cases">
+                    <div class="team-member-row ${isSelected ? 'selected' : ''}" onclick="togglePersonFilter('${person}')" title="Click to view only ${person}'s audited cases">
                         <div class="team-member-info">
                             <div class="team-member-avatar">${initial}</div>
                             <span>${person} ${isSelected ? '✓' : ''}</span>
                         </div>
                         <div class="team-member-badges">
-                            <span class="count-pill">${count} active</span>
+                            <span class="count-pill">${count} audited</span>
                             ${urgentCount > 0 ? `<span class="count-pill urgent">🚨 ${urgentCount}</span>` : ''}
                         </div>
                     </div>
@@ -1209,9 +1233,15 @@
 
         // --- ACTIONS ---
         function markComplete(id) {
-            const item = state.find(x => x.id === id);
-            if (item) {
-                item.completed = true;
+            let changed = false;
+            // Mark all matching records to prevent any duplicate from sticking
+            state.forEach(x => {
+                if (x.id === id) {
+                    x.completed = true;
+                    changed = true;
+                }
+            });
+            if (changed) {
                 saveState();
                 render();
             }
@@ -1271,13 +1301,12 @@
         function doReassign() {
             if (!targetId) return;
             const person = document.getElementById('teammate-select').value;
-            const item = state.find(x => x.id === targetId);
-            if (item) {
-                item.owner = person;
-                saveState();
-                closeModal();
-                render();
-            }
+            state.forEach(x => {
+                if (x.id === targetId) x.owner = person;
+            });
+            saveState();
+            closeModal();
+            render();
         }
 
         // --- LIVE INCOMING CASES & URGENT TOAST ---
@@ -1296,11 +1325,11 @@
 
         function startLiveSimulation() {
             setInterval(() => {
-                if (poolIndex >= INCOMING_SIMULATION_POOL.length) return;
+                // Pick only items that have not yet arrived in state
+                const unadded = INCOMING_SIMULATION_POOL.filter(p => !state.some(s => s.id === p.id));
+                if (unadded.length === 0) return; // Clean halt once all 5 simulation items have arrived
 
-                const incoming = JSON.parse(JSON.stringify(INCOMING_SIMULATION_POOL[poolIndex]));
-                poolIndex++;
-
+                const incoming = JSON.parse(JSON.stringify(unadded[0]));
                 incoming.isNew = true;
 
                 state.unshift(incoming);
