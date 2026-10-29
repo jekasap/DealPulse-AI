@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DealPulse AI - Alpha Demo</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+            --primary: #4338ca;
+            --primary-light: #eef2ff;
+            --urgent-red: #dc2626;
+            --urgent-bg: #fff1f2;
+            --complete-green: #16a34a;
+            --complete-bg: #f0fdf4;
+            --quick-blue: #0284c7;
+            --quick-bg: #e0f2fe;
+            --border: #e2e8f0;
+            --slack-color: #4a154b;
+            --sfdc-color: #00a1e0;
+            --email-color: #ea580c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            padding-bottom: 70px;
+        }
+
+        /* Banner */
+        .banner {
+            background-color: #f59e0b;
+            color: #78350f;
+            text-align: center;
+            font-weight: 800;
+            font-size: 0.75rem;
+            padding: 8px;
+            letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        /* Header */
+        header {
+            background: var(--card);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        /* Role Switcher */
+        .role-switcher-container {
+            display: flex;
+            background: #f1f5f9;
+            padding: 3px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .role-btn {
+            background: none;
+            border: none;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--muted);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .role-btn.active {
+            background: var(--card);
+            color: var(--primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        /* Persona Banner */
+        .persona-bar {
+            background: #f1f5f9;
+            padding: 6px 16px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .persona-bar span.badge-persona {
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* Nav Tabs */
+        nav {
+            display: flex;
+            background: var(--card);
+            border-bottom: 2px solid var(--border);
+            position: sticky;
+            top: 31px;
+            z-index: 900;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px 6px;
+            background: none;
+            border: none;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--muted);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        /* Views */
+        .view {
+            display: none;
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* Privacy Policy Callout in Manager View */
+        .privacy-pill-banner {
+            background: #fefce8;
+            border: 1px solid #fef08a;
+            border-left: 4px solid #ca8a04;
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 0.8rem;
+            color: #713f12;
+            line-height: 1.4;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .stats-grid.three-col {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 10px;
+            text-align: center;
+        }
+
+        .stat-card .num {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1.1;
+        }
+
+        .stat-card.alert .num {
+            color: var(--urgent-red);
+        }
+
+        .stat-card.quick .num {
+            color: var(--quick-blue);
+        }
+
+        .stat-card .lbl {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        /* Manager Team Breakdown Widget (Clickable Rows) */
+        .team-breakdown-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .team-breakdown-header {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .team-member-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 10px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+
+        .team-member-row:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .team-member-row.selected {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            box-shadow: 0 1px 4px rgba(79, 70, 229, 0.15);
+        }
+
+        .team-member-row.selected .team-member-info span {
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .team-member-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .team-member-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 800;
+        }
+
+        .team-member-row.selected .team-member-avatar {
+            background: var(--primary);
+            color: white;
+        }
+
+        .team-member-badges {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .count-pill {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            background: #f1f5f9;
+            color: var(--text);
+        }
+
+        .count-pill.urgent {
+            background: var(--urgent-bg);
+            color: var(--urgent-red);
+            border: 1px solid #fecaca;
+        }
+
+        .filter-status-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--primary-light);
+            border: 1px solid #c7d2fe;
+            color: var(--primary);
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .filter-status-banner button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Filter Chips */
+        .filter-section {
+            margin-bottom: 16px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            margin-bottom: 8px;
+        }
+
+        .filter-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .chip {
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .chip.active {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-left: 6px solid #94a3b8;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            transition: all 0.25s ease;
+        }
+
+        .card.urgent-card {
+            border-left-color: var(--urgent-red);
+            background: var(--urgent-bg);
+        }
+
+        .card.new-highlight {
+            animation: highlightGlow 2.5s ease-out;
+        }
+
+        @keyframes highlightGlow {
+            0% { box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.4); transform: scale(1.01); }
+            100% { box-shadow: 0 1px 3px rgba(0,0,0,0.04); transform: scale(1); }
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .source-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f1f5f9;
+        }
+
+        .source-tag svg {
+            width: 14px;
+            height: 14px;
+            flex-shrink: 0;
+        }
+
+        .source-slack { background: #fdf2f8; color: var(--slack-color); }
+        .source-sfdc { background: #e0f2fe; color: #0284c7; }
+        .source-email { background: #fff7ed; color: var(--email-color); }
+
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .card-body {
+            font-size: 0.92rem;
+            color: #334155;
+            margin-bottom: 12px;
+            line-height: 1.45;
+        }
+
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .badge-red { background: #fee2e2; color: #b91c1c; }
+        .badge-green { background: #dcfce7; color: #15803d; }
+        .badge-blue { background: #e0f2fe; color: #0369a1; }
+        .badge-purple { background: #f3e8ff; color: #6b21a8; }
+
+        /* Card Actions */
+        .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .action-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .btn-action {
+            background: #e2e8f0;
+            color: #0f172a;
+            border: none;
+            padding: 7px 11px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-reply {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .btn-sfdc-open {
+            background: #e0f2fe;
+            color: #0284c7;
+        }
+
+        .btn-complete {
+            background: var(--complete-bg);
+            color: var(--complete-green);
+            border: 1px solid #bbf7d0;
+        }
+
+        /* In-Task Reply Section */
+        .reply-box {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--border);
+        }
+
+        .reply-box textarea {
+            width: 100%;
+            height: 70px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.88rem;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            margin-bottom: 8px;
+        }
+
+        .reply-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn-send {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.82rem;
+        }
+
+        .thread {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .thread-item {
+            background: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.84rem;
+            border-left: 3px solid var(--primary);
+        }
+
+        .thread-meta {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--muted);
+            margin-bottom: 2px;
+        }
+
+        /* Modal */
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 2000;
+        }
+
+        .modal-box {
+            background: var(--card);
+            padding: 24px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            margin: 16px 0;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 1rem;
+            background: white;
+        }
+
+        .modal-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-btns button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Bottom Toast Notification (Urgent Only) */
+        #urgent-toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(150%);
+            background: #0f172a;
+            color: #ffffff;
+            padding: 14px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+            border-left: 6px solid var(--urgent-red);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            z-index: 3000;
+            max-width: 90%;
+            width: 380px;
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+
+        #urgent-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        #urgent-toast .toast-icon {
+            font-size: 1.3rem;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="banner">DEMO MODE: SIMULATION RUNNING (20 INITIAL RECORDS)</div>
+
+    <header>
+        <div class="header-brand">
+            <h1>⚡ DealPulse AI</h1>
+        </div>
+        
+        <!-- Role Switcher -->
+        <div class="role-switcher-container">
+            <button id="role-analyst" class="role-btn active" onclick="switchRole('analyst')">👤 Deal Ops</button>
+            <button id="role-manager" class="role-btn" onclick="switchRole('manager')">👔 Manager</button>
+        </div>
+    </header>
+
+    <!-- Sub-header showing active persona context -->
+    <div class="persona-bar">
+        <span id="persona-label">Viewing as: <strong>Alex (Deal Ops Specialist)</strong></span>
+        <span class="badge-persona" id="persona-badge">Analyst Queue</span>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav>
+        <button id="btn-queue" class="tab-btn active" onclick="goTab('queue')">My Queue</button>
+        <button id="btn-private" class="tab-btn" onclick="goTab('private')">Private DMs</button>
+        <!-- Manager Tab dynamically displayed based on role -->
+        <button id="btn-manager" class="tab-btn" style="display: none;" onclick="goTab('manager')">Manager View</button>
+    </nav>
+
+    <!-- TAB 1: MY QUEUE -->
+    <div id="view-queue" class="view active">
+        <!-- Personal Metrics Bar -->
+        <div class="stats-grid three-col">
+            <div class="stat-card">
+                <div class="num" id="my-stat-total">0</div>
+                <div class="lbl">My Tasks</div>
+            </div>
+            <div class="stat-card alert">
+                <div class="num" id="my-stat-urgent">0</div>
+                <div class="lbl">Urgent</div>
+            </div>
+            <div class="stat-card quick">
+                <div class="num" id="my-stat-quick">0</div>
+                <div class="lbl">Quick Wins</div>
+            </div>
+        </div>
+
+        <!-- My Queue Filters (Type & Source) -->
+        <div class="filter-section">
+            <div class="filter-row" id="queue-type-filters">
+                <button class="chip active" onclick="setFilter('all', this)">All My Tasks</button>
+                <button class="chip" onclick="setFilter('quick', this)">⚡ Quick Wins</button>
+                <button class="chip" onclick="setFilter('urgent', this)">🚨 Urgent Only</button>
+            </div>
+            <div class="filter-row" id="queue-source-filters">
+                <button class="chip active" onclick="setSourceFilter('all', this)">All Sources</button>
+                <button class="chip" onclick="setSourceFilter('slack', this)">💬 Slack</button>
+                <button class="chip" onclick="setSourceFilter('sfdc', this)">☁️ SFDC</button>
+                <button class="chip" onclick="setSourceFilter('email', this)">📩 Email</button>
+            </div>
+        </div>
+
+        <div id="queue-container"></div>
+    </div>
+
+    <!-- TAB 2: PRIVATE DMs -->
+    <div id="view-private" class="view">
+        <div style="background: #e0e7ff; color: #3730a3; padding: 12px; border-radius: 8px; margin-bottom: 16px; font-size: 0.85rem;">
+            <strong>Confidential:</strong> Non-deal internal messages (HR, personal 1:1 chat). Excluded from the Manager Dashboard workload.
+        </div>
+        <div id="private-container"></div>
+    </div>
+
+    <!-- TAB 3: MANAGER VIEW (Only visible in Manager Role) -->
+    <div id="view-manager" class="view">
+        
+        <!-- Privacy Guarantee Banner -->
+        <div class="privacy-pill-banner">
+            🛡️ <strong>Privacy Protection Active:</strong> Slack communication is excluded from the team manager dashboard to protect staff privacy[cite: 2]. Only formal systems of record (Salesforce Cases & Deal Desk Inbound Emails) are aggregated here[cite: 2].
+        </div>
+
+        <!-- Team Aggregates (SFDC & Email Only) -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="num" id="stat-total">0</div>
+                <div class="lbl">Audited Cases (SFDC/Email)</div>
+            </div>
+            <div class="stat-card alert">
+                <div class="num" id="stat-urgent">0</div>
+                <div class="lbl">Urgent (Closing Soon)</div>
+            </div>
+        </div>
+
+        <!-- Clickable Cases per Deal Op Specialist Widget -->
+        <div class="team-breakdown-card">
+            <div class="team-breakdown-header">
+                <span>Cases per Deal Op Specialist</span>
+                <span>Active / Urgent</span>
+            </div>
+            <div id="team-breakdown-list"></div>
+        </div>
+
+        <!-- Person Filter Indicator Banner (appears when filtering by a person) -->
+        <div id="person-filter-banner" class="filter-status-banner" style="display: none;">
+            <span>Filtered by: <strong id="person-filter-name">None</strong></span>
+            <button onclick="clearPersonFilter()">Clear Filter ✕</button>
+        </div>
+
+        <h3 id="mgr-requests-heading" style="font-size: 0.95rem; margin-bottom: 10px; color: var(--muted); text-transform: uppercase; font-weight: 800;">
+            Team Audited Requests (Reassign Any Task)
+        </h3>
+
+        <!-- Manager Filters (Type & System Source: Excludes Slack) -->
+        <div class="filter-section">
+            <div class="filter-row" id="mgr-type-filters">
+                <button class="chip active" onclick="setManagerFilter('all', this)">All Audited Tasks</button>
+                <button class="chip" onclick="setManagerFilter('quick', this)">⚡ Quick Wins</button>
+                <button class="chip" onclick="setManagerFilter('urgent', this)">🚨 Urgent Only</button>
+            </div>
+            <div class="filter-row" id="mgr-source-filters">
+                <button class="chip active" onclick="setManagerSourceFilter('all', this)">All Systems</button>
+                <button class="chip" onclick="setManagerSourceFilter('sfdc', this)">☁️ SFDC</button>
+                <button class="chip" onclick="setManagerSourceFilter('email', this)">📩 Email</button>
+            </div>
+        </div>
+
+        <div id="manager-container"></div>
+    </div>
+
+    <!-- REASSIGN / HANDOVER MODAL -->
+    <div id="modal">
+        <div class="modal-box">
+            <h3 id="modal-heading" style="font-size: 1.15rem; margin-bottom: 6px;">Reassign Task</h3>
+            <p style="font-size: 0.85rem; color: var(--muted);">Choose a Deal Operations team member to take ownership.</p>
+            <select id="teammate-select">
+                <option value="Alex (Deal Ops)">Alex (Deal Ops)</option>
+                <option value="Sarah (Senior Analyst)">Sarah (Senior Analyst)</option>
+                <option value="David (Deal Desk)">David (Deal Desk)</option>
+                <option value="Emma (RevOps)">Emma (RevOps)</option>
+                <option value="Manager">Manager</option>
+            </select>
+            <div class="modal-btns">
+                <button style="background: #e2e8f0; color: #0f172a;" onclick="closeModal()">Cancel</button>
+                <button style="background: var(--primary); color: #fff;" onclick="doReassign()">Confirm Assignment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION (URGENT ONLY) -->
+    <div id="urgent-toast">
+        <div class="toast-icon">🚨</div>
+        <div>
+            <div style="color: #fca5a5; font-size: 0.75rem; text-transform: uppercase; font-weight: 800;">New Urgent Request</div>
+            <div id="urgent-toast-body" style="font-size: 0.86rem; color: #f8fafc;"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- INLINE SVGs ---
+        const ICONS = {
+            Slack: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zM6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg>`,
+            SFDC: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>`,
+            Email: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>`
+        };
+
+        const TEAM_MEMBERS = [
+            "Alex (Deal Ops)",
+            "Sarah (Senior Analyst)",
+            "David (Deal Desk)",
+            "Emma (RevOps)",
+            "Manager"
+        ];
+
+        function addDays(d) {
+            const dt = new Date();
+            dt.setDate(dt.getDate() + d);
+            return dt.toISOString().split('T')[0];
+        }
+
+        // --- 20 INITIAL SAMPLE RECORDS ---
+        const INITIAL_DATA = [
+            { id: 'T-101', source: 'SFDC', type: 'work', company: 'Acme Corp', desc: 'Custom Net 60 payment terms approval. AE tagged high priority.', closeDate: addDays(1), effort: '1h', isQuick: false, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
+            { id: 'T-102', source: 'Slack', type: 'work', company: 'Beta LLC', desc: 'Need standard 10% volume discount approved on renewal.', closeDate: addDays(2), effort: '5m', isQuick: true, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
+            { id: 'T-103', source: 'Email', type: 'work', company: 'Gamma Inc', desc: 'Legal redlines received on master services agreement indemnification.', closeDate: addDays(14), effort: '2h', isQuick: false, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
+            { id: 'T-104', source: 'Slack', type: 'work', company: 'Delta Co', desc: 'Change bill-to legal entity on approved quote before sending.', closeDate: addDays(0), effort: '10m', isQuick: true, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
+            
+            // Manager Personal Request 1
+            { id: 'T-105', source: 'SFDC', type: 'work', company: 'Zeta Corp', desc: 'Executive Escalation: Multi-year ramp deal structure review with custom tiered pricing (> $500k ARR).', closeDate: addDays(5), effort: '1.5h', isQuick: false, owner: 'Manager', completed: false, replies: [] },
+            
+            // Private DMs for Alex (Deal Ops)
+            { id: 'T-106', source: 'Slack', type: 'private', company: 'John (Sales AE)', desc: 'Can we grab 5 min coffee later to talk about my Q3 commission tier?', closeDate: null, effort: '15m', isQuick: true, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
+            { id: 'T-107', source: 'Slack', type: 'private', company: 'People Ops', desc: 'Reminder: Submit benefits open enrollment by Friday 5 PM.', closeDate: null, effort: '5m', isQuick: true, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
+            
+            { id: 'T-108', source: 'Email', type: 'work', company: 'Epsilon Ltd', desc: 'Product downgrade request for 20 seats on auto-renew.', closeDate: addDays(6), effort: '25m', isQuick: false, owner: 'David (Deal Desk)', completed: false, replies: [] },
+            { id: 'T-109', source: 'SFDC', type: 'work', company: 'Horizon AI', desc: 'Early renewal request co-terming 3 separate active contracts.', closeDate: addDays(1), effort: '45m', isQuick: false, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
+            { id: 'T-110', source: 'Slack', type: 'work', company: 'Apex Global', desc: 'Can we waive the $1,500 onboarding fee for fast quarterly close?', closeDate: addDays(0), effort: '5m', isQuick: true, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
+            { id: 'T-111', source: 'Email', type: 'work', company: 'NorthStar Tech', desc: 'Requesting semi-annual billing schedule instead of annual upfront.', closeDate: addDays(2), effort: '10m', isQuick: true, owner: 'Emma (RevOps)', completed: false, replies: [] },
+            { id: 'T-112', source: 'SFDC', type: 'work', company: 'Quantum Dynamics', desc: 'Enterprise ELA renewal with non-standard SLA warranty penalty clauses.', closeDate: addDays(8), effort: '3h', isQuick: false, owner: 'Sarah (Senior Analyst)', completed: false, replies: [] },
+            { id: 'T-113', source: 'Slack', type: 'private', company: 'Product Lead', desc: 'Have you got the latest usage metrics for our sync with the VP?', closeDate: null, effort: '10m', isQuick: true, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
+            { id: 'T-114', source: 'Slack', type: 'work', company: 'SolarEdge Bio', desc: 'Needs approval for 10 developer sandbox add-ons at 40% off.', closeDate: addDays(3), effort: '10m', isQuick: true, owner: 'David (Deal Desk)', completed: false, replies: [] },
+            { id: 'T-115', source: 'Email', type: 'work', company: 'CloudPeak Systems', desc: 'AE selected EUR instead of USD on order form. Price book unlock needed.', closeDate: addDays(1), effort: '5m', isQuick: true, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
+            { id: 'T-116', source: 'SFDC', type: 'work', company: 'CyberVigil', desc: 'Security questionnaire and mutual DPA terms review for enterprise pilot.', closeDate: addDays(11), effort: '1.5h', isQuick: false, owner: 'Emma (RevOps)', completed: false, replies: [] },
+            
+            // Private DM for Manager
+            { id: 'T-117', source: 'Slack', type: 'private', company: 'VP of Sales', desc: 'Hey, please review the revised discount matrix before tomorrow\'s executive committee call.', closeDate: null, effort: '10m', isQuick: true, owner: 'Manager', completed: false, replies: [] },
+            
+            // Manager Personal Request 2
+            { id: 'T-118', source: 'SFDC', type: 'work', company: 'Vertex Financial', desc: 'VP Exception Approval: Multi-subsidiary billing split across 3 EMEA and US entities with liability carve-out.', closeDate: addDays(2), effort: '2h', isQuick: false, owner: 'Manager', completed: false, replies: [] },
+            
+            { id: 'T-119', source: 'Slack', type: 'work', company: 'PulsePoint Media', desc: 'Customer CFO signed but used old 2025 price book. Validate delta.', closeDate: addDays(0), effort: '15m', isQuick: true, owner: 'Sarah (Senior Analyst)', completed: false, replies: [] },
+            { id: 'T-120', source: 'Email', type: 'work', company: 'Summit Logistics', desc: 'Net 45 terms requested on a multi-year software expansion deal.', closeDate: addDays(3), effort: '10m', isQuick: true, owner: 'Sarah (Senior Analyst)', completed: false, replies: [] }
+        ];
+
+        // --- SIMULATED INCOMING STREAM ---
+        const INCOMING_SIMULATION_POOL = [
+            { id: 'T-121', source: 'SFDC', type: 'work', company: 'HyperScale Cloud', desc: 'Executive discount approval for 500 seat ramp. Closing end of day!', closeDate: addDays(0), effort: '10m', isQuick: true, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
+            { id: 'T-122', source: 'Slack', type: 'work', company: 'Nordic Bank ASA', desc: 'Customer requires supplier diversity code confirmation in quote.', closeDate: addDays(12), effort: '15m', isQuick: true, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
+            { id: 'T-123', source: 'SFDC', type: 'work', company: 'Vanguard Health', desc: 'BAA HIPAA contract addendum approval requested by Enterprise AE.', closeDate: addDays(1), effort: '1.5h', isQuick: false, owner: 'Alex (Deal Ops)', completed: false, replies: [] },
+            { id: 'T-124', source: 'Email', type: 'work', company: 'Starlight Media', desc: 'Renewal price indexation clause review for 2027 contract year.', closeDate: addDays(20), effort: '40m', isQuick: false, owner: 'Sarah (Senior Analyst)', completed: false, replies: [] },
+            { id: 'T-125', source: 'Slack', type: 'work', company: 'Titan Robotics', desc: 'URGENT: Quote expired today, customer signature ready. Re-enable order.', closeDate: addDays(0), effort: '5m', isQuick: true, owner: 'Alex (Deal Ops)', completed: false, replies: [] }
+        ];
+
+        let state = [];
+        let currentRole = 'analyst';
+        
+        // Filter States
+        let filter = 'all';
+        let sourceFilter = 'all';
+        let managerFilter = 'all';
+        let managerSourceFilter = 'all';
+        let managerPersonFilter = null; // null means 'all team members'
+        
+        let targetId = null;
+        let poolIndex = 0;
+        let toastTimeout = null;
+
+        function loadState() {
+            try {
+                const saved = localStorage.getItem('dealpulse_v10');
+                if (saved) {
+                    state = JSON.parse(saved);
+                    if (!Array.isArray(state) || state.length < 15) throw new Error("Reload");
+                } else {
+                    state = JSON.parse(JSON.stringify(INITIAL_DATA));
+                }
+            } catch(e) {
+                state = JSON.parse(JSON.stringify(INITIAL_DATA));
+            }
+            render();
+            startLiveSimulation();
+        }
+
+        function saveState() {
+            try { localStorage.setItem('dealpulse_v10', JSON.stringify(state)); } catch(e) {}
+        }
+
+        function resetData() {
+            if (confirm("Reset all records back to initial demo state?")) {
+                try { localStorage.removeItem('dealpulse_v10'); } catch(e) {}
+                state = JSON.parse(JSON.stringify(INITIAL_DATA));
+                poolIndex = 0;
+                managerPersonFilter = null;
+                render();
+            }
+        }
+
+        function checkUrgency(dateStr) {
+            if (!dateStr) return { urgent: false, label: 'No Close Date', days: 999 };
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            const target = new Date(dateStr);
+            const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 0) return { urgent: true, label: 'CLOSES TODAY', days: 0 };
+            if (diffDays <= 3) return { urgent: true, label: 'Closes in ' + diffDays + 'd', days: diffDays };
+            return { urgent: false, label: 'Closes in ' + diffDays + 'd', days: diffDays };
+        }
+
+        // --- ROLE SWITCHING ---
+        function switchRole(role) {
+            currentRole = role;
+            document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('role-' + role).classList.add('active');
+
+            const managerTabBtn = document.getElementById('btn-manager');
+            const personaLabel = document.getElementById('persona-label');
+            const personaBadge = document.getElementById('persona-badge');
+
+            if (role === 'manager') {
+                managerTabBtn.style.display = 'block';
+                personaLabel.innerHTML = 'Viewing as: <strong>Taylor (RevOps Director / Manager)</strong>';
+                personaBadge.innerText = 'Manager Queue (2 Requests)';
+                goTab('manager');
+            } else {
+                managerTabBtn.style.display = 'none';
+                personaLabel.innerHTML = 'Viewing as: <strong>Alex (Deal Ops Specialist)</strong>';
+                personaBadge.innerText = 'Analyst Queue';
+                goTab('queue');
+            }
+        }
+
+        function goTab(tabName) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+            document.getElementById('view-' + tabName).classList.add('active');
+            document.getElementById('btn-' + tabName).classList.add('active');
+            render();
+        }
+
+        // --- FILTER SETTERS ---
+        function setFilter(f, btn) {
+            filter = f;
+            document.querySelectorAll('#queue-type-filters .chip').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            renderQueue();
+        }
+
+        function setSourceFilter(f, btn) {
+            sourceFilter = f;
+            document.querySelectorAll('#queue-source-filters .chip').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            renderQueue();
+        }
+
+        function setManagerFilter(f, btn) {
+            managerFilter = f;
+            document.querySelectorAll('#mgr-type-filters .chip').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            renderManagerCards();
+        }
+        
+        function setManagerSourceFilter(f, btn) {
+            managerSourceFilter = f;
+            document.querySelectorAll('#mgr-source-filters .chip').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            renderManagerCards();
+        }
+
+        // --- CLICK ON PERSON IN MANAGER VIEW ---
+        function togglePersonFilter(personName) {
+            if (managerPersonFilter === personName) {
+                managerPersonFilter = null; // Toggle off if clicked again
+            } else {
+                managerPersonFilter = personName; // Filter by this person
+            }
+            renderManager();
+        }
+
+        function clearPersonFilter() {
+            managerPersonFilter = null;
+            renderManager();
+        }
+
+        // --- CARD BUILDER ---
+        function buildCard(item, isManagerView) {
+            const urg = checkUrgency(item.closeDate);
+            const sourceClass = 'source-' + item.source.toLowerCase();
+            const sourceIcon = ICONS[item.source] || '';
+            const activeOwnerName = (currentRole === 'manager') ? 'Manager' : 'Alex (Deal Ops)';
+
+            let threadHTML = '';
+            if (item.replies && item.replies.length > 0) {
+                threadHTML = `
+                    <div class="thread">
+                        ${item.replies.map(r => `
+                            <div class="thread-item">
+                                <div class="thread-meta">${r.sender} • ${r.time}</div>
+                                <div>${r.text}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="card ${urg.urgent ? 'urgent-card' : ''} ${item.isNew ? 'new-highlight' : ''}" id="card-${item.id}">
+                    <div class="card-top">
+                        <span class="source-tag ${sourceClass}">
+                            ${sourceIcon}
+                            ${item.source}
+                        </span>
+                        <span style="font-size: 0.75rem; color: var(--muted); font-weight: 700;">${item.id}</span>
+                    </div>
+
+                    <div class="card-title">${item.company}</div>
+                    <div class="card-body">"${item.desc}"</div>
+
+                    <div class="tag-row">
+                        ${item.type === 'work' ? `
+                            <span class="badge ${urg.urgent ? 'badge-red' : 'badge-green'}">
+                                ${urg.urgent ? '🚨 ' : '📅 '}${urg.label}
+                            </span>
+                        ` : ''}
+                        <span class="badge ${item.isQuick ? 'badge-blue' : 'badge-purple'}">
+                            ${item.isQuick ? '⚡ Quick Win' : '🧠 Deep Work'} (${item.effort})
+                        </span>
+                    </div>
+
+                    ${threadHTML}
+
+                    <!-- In-Task Reply Box -->
+                    <div class="reply-box" id="reply-box-${item.id}">
+                        <textarea id="reply-input-${item.id}" placeholder="Reply directly to rep (syncs back to ${item.source})..."></textarea>
+                        <div class="reply-actions">
+                            <button class="btn-action" onclick="toggleReply('${item.id}')">Cancel</button>
+                            <button class="btn-send" onclick="sendReply('${item.id}')">Send Reply</button>
+                        </div>
+                    </div>
+
+                    <div class="card-bottom">
+                        <span style="font-weight: 700; color: var(--muted);">👤 ${item.owner}</span>
+                        <div class="action-group">
+                            ${item.source === 'SFDC' ? `
+                                <button class="btn-action btn-sfdc-open" onclick="openSFDC('${item.id}', '${item.company}')">☁️ Open in SFDC</button>
+                            ` : ''}
+
+                            <button class="btn-action btn-reply" onclick="toggleReply('${item.id}')">💬 Reply</button>
+
+                            ${isManagerView ? `
+                                <button class="btn-action" onclick="openModal('${item.id}', true)">Reassign 🔄</button>
+                            ` : (item.owner === activeOwnerName ? `
+                                <button class="btn-action" onclick="openModal('${item.id}', false)">Handover ➡️</button>
+                            ` : '')}
+
+                            <button class="btn-action btn-complete" onclick="markComplete('${item.id}')">✓ Mark Complete</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- RENDER VIEWS ---
+        function renderQueue() {
+            const el = document.getElementById('queue-container');
+            const activeOwner = (currentRole === 'manager') ? 'Manager' : 'Alex (Deal Ops)';
+
+            let myAllTasks = state.filter(x => x.type === 'work' && x.owner === activeOwner && !x.completed);
+
+            const totalMyTasks = myAllTasks.length;
+            const urgentMyTasks = myAllTasks.filter(x => checkUrgency(x.closeDate).urgent).length;
+            const quickMyTasks = myAllTasks.filter(x => x.isQuick).length;
+
+            document.getElementById('my-stat-total').innerText = totalMyTasks;
+            document.getElementById('my-stat-urgent').innerText = urgentMyTasks;
+            document.getElementById('my-stat-quick').innerText = quickMyTasks;
+
+            let list = [...myAllTasks];
+            if (filter === 'quick') list = list.filter(x => x.isQuick);
+            if (filter === 'urgent') list = list.filter(x => checkUrgency(x.closeDate).urgent);
+            
+            if (sourceFilter !== 'all') {
+                list = list.filter(x => x.source.toLowerCase() === sourceFilter);
+            }
+
+            if (!list.length) {
+                el.innerHTML = '<p style="text-align:center; padding:35px; color: var(--muted); font-size: 0.95rem;">🎉 No tasks matching this filter combination.</p>';
+            } else {
+                el.innerHTML = list.map(item => buildCard(item, false)).join('');
+            }
+        }
+
+        function renderPrivate() {
+            const el = document.getElementById('private-container');
+            const activeOwner = (currentRole === 'manager') ? 'Manager' : 'Alex (Deal Ops)';
+            
+            const list = state.filter(x => x.type === 'private' && x.owner === activeOwner && !x.completed);
+            el.innerHTML = list.length ? list.map(item => buildCard(item, false)).join('') 
+                : '<p style="text-align:center; padding:35px; color: var(--muted);">No private messages.</p>';
+        }
+
+        function renderManagerCards() {
+            const el = document.getElementById('manager-container');
+            let workList = state.filter(x => x.type === 'work' && !x.completed && x.source !== 'Slack');
+
+            // Apply Person Filter
+            if (managerPersonFilter) {
+                workList = workList.filter(x => x.owner === managerPersonFilter);
+            }
+
+            // Apply Type & Source Filters
+            if (managerFilter === 'quick') workList = workList.filter(x => x.isQuick);
+            if (managerFilter === 'urgent') workList = workList.filter(x => checkUrgency(x.closeDate).urgent);
+            
+            if (managerSourceFilter !== 'all') {
+                workList = workList.filter(x => x.source.toLowerCase() === managerSourceFilter);
+            }
+
+            if (!workList.length) {
+                el.innerHTML = `<p style="text-align:center; padding:35px; color: var(--muted); font-size: 0.95rem;">
+                    🎉 No tasks matching this filter combination${managerPersonFilter ? ` for <strong>${managerPersonFilter}</strong>` : ''}.
+                </p>`;
+            } else {
+                el.innerHTML = workList.map(item => buildCard(item, true)).join('');
+            }
+        }
+
+        function renderManager() {
+            const teamBreakdownEl = document.getElementById('team-breakdown-list');
+            const filterBanner = document.getElementById('person-filter-banner');
+            const filterNameEl = document.getElementById('person-filter-name');
+            const reqHeading = document.getElementById('mgr-requests-heading');
+
+            const auditedWorkList = state.filter(x => x.type === 'work' && !x.completed && x.source !== 'Slack');
+            
+            const total = auditedWorkList.length;
+            const urgent = auditedWorkList.filter(x => checkUrgency(x.closeDate).urgent).length;
+
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-urgent').innerText = urgent;
+
+            // Handle Person Filter Indicator
+            if (managerPersonFilter) {
+                filterBanner.style.display = 'flex';
+                filterNameEl.innerText = managerPersonFilter;
+                reqHeading.innerText = `Cases Assigned to ${managerPersonFilter} (Reassign Any Task)`;
+            } else {
+                filterBanner.style.display = 'none';
+                reqHeading.innerText = 'Team Audited Requests (Reassign Any Task)';
+            }
+
+            // Breakdown per specialist with click-to-filter
+            let breakdownHTML = '';
+            TEAM_MEMBERS.forEach(person => {
+                const personTasks = auditedWorkList.filter(t => t.owner === person);
+                const count = personTasks.length;
+                const urgentCount = personTasks.filter(t => checkUrgency(t.closeDate).urgent).length;
+                const initial = person.charAt(0);
+                const isSelected = (managerPersonFilter === person);
+
+                breakdownHTML += `
+                    <div class="team-member-row ${isSelected ? 'selected' : ''}" onclick="togglePersonFilter('${person}')" title="Click to view only ${person}'s cases">
+                        <div class="team-member-info">
+                            <div class="team-member-avatar">${initial}</div>
+                            <span>${person} ${isSelected ? '✓' : ''}</span>
+                        </div>
+                        <div class="team-member-badges">
+                            <span class="count-pill">${count} active</span>
+                            ${urgentCount > 0 ? `<span class="count-pill urgent">🚨 ${urgentCount}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            teamBreakdownEl.innerHTML = breakdownHTML;
+
+            renderManagerCards();
+        }
+
+        function render() {
+            renderQueue();
+            renderPrivate();
+            if (currentRole === 'manager') {
+                renderManager();
+            }
+        }
+
+        // --- ACTIONS ---
+        function markComplete(id) {
+            const item = state.find(x => x.id === id);
+            if (item) {
+                item.completed = true;
+                saveState();
+                render();
+            }
+        }
+
+        function openSFDC(id, company) {
+            alert(`Opening Salesforce Service Cloud...\nRecord: [${id}] - ${company}\nObject: Opportunity > Deal Desk Case\nStatus: Synced`);
+        }
+
+        function toggleReply(id) {
+            const box = document.getElementById('reply-box-' + id);
+            if (box) {
+                const isHidden = (box.style.display === '' || box.style.display === 'none');
+                box.style.display = isHidden ? 'block' : 'none';
+                if (isHidden) {
+                    const input = document.getElementById('reply-input-' + id);
+                    if (input) input.focus();
+                }
+            }
+        }
+
+        function sendReply(id) {
+            const input = document.getElementById('reply-input-' + id);
+            if (!input || !input.value.trim()) return;
+
+            const item = state.find(x => x.id === id);
+            if (item) {
+                if (!item.replies) item.replies = [];
+                const senderName = (currentRole === 'manager') ? 'Manager' : 'Alex (Deal Ops)';
+                item.replies.push({
+                    sender: senderName,
+                    text: input.value.trim(),
+                    time: 'Just now'
+                });
+                saveState();
+                render();
+            }
+        }
+
+        function openModal(id, isManager) {
+            targetId = id;
+            const heading = document.getElementById('modal-heading');
+            if (heading) heading.innerText = isManager ? 'Manager Reassign' : 'Handover Task';
+            
+            const item = state.find(x => x.id === id);
+            if (item) {
+                document.getElementById('teammate-select').value = item.owner;
+            }
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            targetId = null;
+        }
+
+        function doReassign() {
+            if (!targetId) return;
+            const person = document.getElementById('teammate-select').value;
+            const item = state.find(x => x.id === targetId);
+            if (item) {
+                item.owner = person;
+                saveState();
+                closeModal();
+                render();
+            }
+        }
+
+        // --- LIVE INCOMING CASES & URGENT TOAST ---
+        function triggerUrgentToast(company, daysText) {
+            const toast = document.getElementById('urgent-toast');
+            const toastBody = document.getElementById('urgent-toast-body');
+            
+            toastBody.innerText = `${company} — ${daysText}`;
+            toast.classList.add('show');
+
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4500);
+        }
+
+        function startLiveSimulation() {
+            setInterval(() => {
+                if (poolIndex >= INCOMING_SIMULATION_POOL.length) return;
+
+                const incoming = JSON.parse(JSON.stringify(INCOMING_SIMULATION_POOL[poolIndex]));
+                poolIndex++;
+
+                incoming.isNew = true;
+
+                state.unshift(incoming);
+                saveState();
+                render();
+
+                const urg = checkUrgency(incoming.closeDate);
+                if (urg.urgent) {
+                    triggerUrgentToast(incoming.company, urg.label);
+                }
+
+                setTimeout(() => {
+                    incoming.isNew = false;
+                }, 3000);
+
+            }, 14000);
+        }
+
+        // Boot
+        loadState();
+    </script>
+</body>
+</html>
